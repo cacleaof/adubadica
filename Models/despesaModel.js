@@ -1,34 +1,33 @@
 const conexao = require('../Database/conexao');
     
 class despesaModel {
-
-  executarQuery(sql, params) {
-    return new Promise((resolve, reject) => {
+  async executarQuery(sql, params) {
+    try {
       console.log('Executando SQL:', sql);
       console.log('Parâmetros:', JSON.stringify(params, null, 2));
       
-      conexao.query(sql, params, (erro, resultados) => {
-        if (erro) {
-          console.error('Erro na execução da query:', erro.message);
-          console.error('Código do erro:', erro.code);
-          console.error('SQL Estado:', erro.sqlState);
-          return reject(erro);
-        }
-        console.log('Query executada com sucesso. Resultados:', resultados);
-        return resolve(resultados);
-      });
-    });
+      const [resultados] = await conexao.query(sql, params);
+      console.log('Query executada com sucesso. Resultados:', resultados);
+      return resultados;
+    } catch (erro) {
+      console.error('Erro na execução da query:', erro.message);
+      console.error('Código do erro:', erro.code);
+      console.error('SQL Estado:', erro.sqlState);
+      throw erro;
+    }
   }
-   buscar(id) {
+
+  async buscar(id) {
     const sql = 'SELECT * FROM despesa WHERE id = ?';
     return this.executarQuery(sql, id);
   }
-  buscarTodos() {
+
+  async buscarTodos() {
     const sql = 'SELECT * FROM despesa';
     return this.executarQuery(sql);
   }
 
-  criar(novodespesa) {
+  async criar(novodespesa) {
     // Validação básica
     if (!novodespesa) {
       throw new Error('Dados da despesa são obrigatórios');
@@ -66,12 +65,15 @@ class despesaModel {
     }
   }
     
-  deletar(id) {
+  async deletar(id) {
     const sql = 'DELETE FROM despesa WHERE id = ?';
-    return this.executarQuery(sql, id);}
-
-  atualizar(despesaAtualizado, id) {
-        const sql = 'UPDATE despesa SET ? WHERE id = ?';
-        return this.executarQuery(sql, [despesaAtualizado, id])}
+    return this.executarQuery(sql, id);
   }
-    module.exports = new despesaModel();
+
+  async atualizar(despesaAtualizado, id) {
+    const sql = 'UPDATE despesa SET ? WHERE id = ?';
+    return this.executarQuery(sql, [despesaAtualizado, id]);
+  }
+}
+
+module.exports = new despesaModel();

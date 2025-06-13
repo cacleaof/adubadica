@@ -1,10 +1,10 @@
-class   tabelas {
+class tabelas {
     init(conexao) {
         this.conexao = conexao;
-        this.criarTabelas();
+        return this.criarTabelas();
     }
 
- criarTabelas() {
+    async criarTabelas() {
         const sql = `CREATE TABLE IF NOT EXISTS cultura (
             id INT NOT NULL AUTO_INCREMENT,
             nome VARCHAR(100) NOT NULL,
@@ -31,7 +31,8 @@ class   tabelas {
             datanascimento VARCHAR(8),
             PRIMARY KEY (id)
         )`;
-  const sqlf = `CREATE TABLE IF NOT EXISTS despesa (
+
+        const sqlf = `CREATE TABLE IF NOT EXISTS despesa (
             id INT NOT NULL AUTO_INCREMENT,
             nome VARCHAR(100) NOT NULL,
             descricao VARCHAR(100),
@@ -41,15 +42,8 @@ class   tabelas {
             venc DATE,
             PRIMARY KEY (id)
         )`;
-       this.conexao.query(sqlf, (erro) => {
-            if (erro) {
-                console.log(erro);
-            } else {
-                console.log('Tabela despesa foi criada com sucesso!');
-            }
-        });
 
-const sqlt = `CREATE TABLE IF NOT EXISTS task (
+        const sqlt = `CREATE TABLE IF NOT EXISTS task (
             id INT NOT NULL AUTO_INCREMENT,
             nome VARCHAR(100) NOT NULL,
             descricao VARCHAR(255),
@@ -63,28 +57,24 @@ const sqlt = `CREATE TABLE IF NOT EXISTS task (
             PRIMARY KEY (id),
             FOREIGN KEY (uid) REFERENCES user(id)
         )`;
-          this.conexao.query(sqlt, (erro) => {
-            if (erro) {
-                console.log(erro);
-            } else {
-                console.log('Tabela task criada com sucesso!');
-            }
-        });
-          this.conexao.query(sql, (erro) => {
-            if (erro) {
-                console.log(erro);
-            } else {
-                console.log('Tabela cultura criada com sucesso!');
-            }
-        });
-         this.conexao.query(sqlu, (erro) => {
-            if (erro) {
-                console.log(erro);
-            } else {
-                console.log('Tabela user criada com sucesso!');
-            }
-        });
 
+        try {
+            await this.conexao.query(sqlf);
+            console.log('Tabela despesa foi criada com sucesso!');
+
+            await this.conexao.query(sqlt);
+            console.log('Tabela task criada com sucesso!');
+
+            await this.conexao.query(sql);
+            console.log('Tabela cultura criada com sucesso!');
+
+            await this.conexao.query(sqlu);
+            console.log('Tabela user criada com sucesso!');
+        } catch (erro) {
+            console.error('Erro ao criar tabelas:', erro);
+            throw erro;
+        }
     }
 }
+
 module.exports = new tabelas();

@@ -1,6 +1,6 @@
 const mysql = require('mysql2/promise');
 
-const conexao = mysql.createPool({
+const pool = mysql.createPool({
     host: 'mysql-caleao.alwaysdata.net',
     port: 3306,
     user: 'caleao',
@@ -11,4 +11,18 @@ const conexao = mysql.createPool({
     queueLimit: 0,
 });
 
-module.exports = conexao;
+// Exporta o pool para uso local
+module.exports = pool;
+
+// Exporta a função para o Vercel
+module.exports.vercel = async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT NOW() AS agora");
+    res.statusCode = 200;
+    res.end(`Data e hora do MySQL: ${rows[0].agora}`);
+  } catch (err) {
+    console.error("Erro MySQL:", err);
+    res.statusCode = 500;
+    res.end("Erro ao conectar ao banco de dados.");
+  }
+};
