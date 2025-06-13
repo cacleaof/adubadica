@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const router = Router();
 const despesaController = require('../Controllers/despesaController');
-const { format, parseISO } = require('date-fns');
 
 router.get('/despesas', despesaController.buscarTodos);
 
