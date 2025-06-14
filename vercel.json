@@ -11,5 +11,14 @@
       "src": "/(.*)",
       "dest": "server.js"
     }
+  ],
+  "cron": {
+    "keep-alive": "*/10 ****"
+  },
+  "crons": [
+    {
+      "path": "/api/ping",
+      "schedule": "@vercel/keep-alive"
+    }
   ]
 }
