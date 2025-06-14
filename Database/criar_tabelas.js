@@ -35,11 +35,13 @@ class tabelas {
         const sqlf = `CREATE TABLE IF NOT EXISTS despesa (
             id INT NOT NULL AUTO_INCREMENT,
             nome VARCHAR(100) NOT NULL,
+            imagem VARCHAR(256),
             descricao VARCHAR(100),
             valor DECIMAL(10, 2),
             CD VARCHAR(1),
             tipo VARCHAR(10),
             venc DATE,
+            pago BOOLEAN DEFAULT FALSE,
             PRIMARY KEY (id)
         )`;
 

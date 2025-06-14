@@ -1,7 +1,7 @@
  class dados {
       init(conexao) {
         this.conexao = conexao;
-        //this.incluirDados();
+        this.incluirDados();
     }
  incluirDados() {
  const incluirU ="INSERT INTO user(name, tipo, email, cpf, password, phone, datanascimento) VALUES ('carlos leao', 'A', 'cacleaof@gmail.com', '68631839434', '1234', '081994254405', '07-05-67'),"+
