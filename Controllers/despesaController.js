@@ -23,7 +23,7 @@ class despesaController {
   async criar(req, res) {
     try {
       const novodespesa = req.body;
-      console.log('Dados recebidos no controller:', novodespesa);
+      //console.log('Dados recebidos no controller:', novodespesa);
       const despesaCriado = await despesaModel.criar(novodespesa);
       res.status(201).json(despesaCriado);
     } catch (error) {

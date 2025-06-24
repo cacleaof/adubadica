@@ -2,17 +2,10 @@ const conexao = require('../Database/conexao');
     
 class despesaModel {
   async executarQuery(sql, params) {
-    try {
-      console.log('Executando SQL:', sql);
-      console.log('Parâmetros:', JSON.stringify(params, null, 2));
-      
+    try {    
       const [resultados] = await conexao.query(sql, params);
-      console.log('Query executada com sucesso. Resultados:', resultados);
       return resultados;
     } catch (erro) {
-      console.error('Erro na execução da query:', erro.message);
-      console.error('Código do erro:', erro.code);
-      console.error('SQL Estado:', erro.sqlState);
       throw erro;
     }
   }
@@ -52,7 +45,9 @@ class despesaModel {
         tipo: (novodespesa.tipo || '').trim(),
         valor: parseFloat(novodespesa.valor) || 0,
         venc: dataFormatada,
-        cd: (novodespesa.CD || '').trim()
+        cd: (novodespesa.CD || '').trim(),
+        pix: (novodespesa.pix || '').trim(),
+        codbar: (novodespesa.codbar || '').trim()
       };
 
       console.log('Dados formatados para inserção:', novodespesaFormatada);

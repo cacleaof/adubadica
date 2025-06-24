@@ -6,7 +6,7 @@ router.get('/despesas', despesaController.buscarTodos);
 
 router.get('/despesa/:id', despesaController.buscar);
   
-router.post('/despesas', despesaController.criar);
+router.post('/despesa', despesaController.criar);
  
 router.put('/despesa/:id', despesaController.atualizar);
   

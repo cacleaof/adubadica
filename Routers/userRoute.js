@@ -6,7 +6,7 @@ router.get('/users', userController.buscarTodos);
 
 router.get('/user/:id', userController.buscar);
   
-router.post('/user', (userController.criar));
+router.post('/user/', (userController.criar));
  
 router.put('/user/:id', (userController.atualizar));
   
