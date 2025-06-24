@@ -7,9 +7,22 @@ const pool = mysql.createPool({
     password: 'aduba@832',               
     database: 'caleao_controle',
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 5,
     queueLimit: 0,
+    acquireTimeout: 60000,
+    timeout: 60000,
+    reconnect: true
 });
+
+// Teste de conexão
+pool.getConnection()
+    .then(connection => {
+        console.log('Conexão com banco estabelecida');
+        connection.release();
+    })
+    .catch(err => {
+        console.error('Erro ao conectar com banco:', err);
+    });
 
 // Exporta o pool para uso local
 module.exports = pool;
