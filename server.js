@@ -15,7 +15,7 @@ app.use(cors({origin: '*'}));
 async function inicializarBanco() {
     try {
         await tabelas.init(conexao);
-        await dados.init(conexao);
+        //await dados.init(conexao);
         console.log('Banco de dados inicializado com sucesso!');
     } catch (erro) {
         console.error('Erro ao inicializar banco de dados:', erro);

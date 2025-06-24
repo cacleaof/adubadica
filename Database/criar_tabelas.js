@@ -42,6 +42,7 @@ class tabelas {
             tipo VARCHAR(10),
             venc DATE,
             pago BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id)
         )`;
 
@@ -56,8 +57,21 @@ class tabelas {
             status VARCHAR(10),
             prioridade INT,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            FOREIGN KEY (uid) REFERENCES user(id)
+            PRIMARY KEY (id)
+        )`;
+
+        
+        const sqlp = `CREATE TABLE IF NOT EXISTS proj (
+            id INT NOT NULL AUTO_INCREMENT,
+            nome VARCHAR(100) NOT NULL,
+            descricao VARCHAR(255),
+            tipo VARCHAR(10),
+            uid INT,
+            data DATE,
+            status VARCHAR(10),
+            prioridade INT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
         )`;
 
         try {
@@ -72,6 +86,11 @@ class tabelas {
 
             await this.conexao.query(sqlu);
             console.log('Tabela user criada com sucesso!');
+
+            
+            await this.conexao.query(sqlp);
+            console.log('Tabela projs criada com sucesso!');
+
         } catch (erro) {
             console.error('Erro ao criar tabelas:', erro);
             throw erro;
