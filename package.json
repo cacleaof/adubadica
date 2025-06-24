@@ -2,9 +2,11 @@
   "name": "atendimento_nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "vercel-build": "echo 'Build completed'"
   },
   "keywords": [],
   "author": "",
