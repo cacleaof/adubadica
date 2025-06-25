@@ -1,8 +1,12 @@
 const taskModel = require('../Models/taskModel');
+const { inicializarBanco } = require('../Database/init-db');
 
 class taskController {
   async buscarTodos(req, res) {
     try {
+      // Inicializa o banco se necessário
+      await inicializarBanco();
+      
       // Timeout de 15 segundos para a consulta
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Timeout na consulta')), 15000);
@@ -27,6 +31,9 @@ class taskController {
     try {
       const { id } = req.params;
       
+      // Inicializa o banco se necessário
+      await inicializarBanco();
+      
       // Timeout de 10 segundos para a consulta
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Timeout na consulta')), 10000);
@@ -50,6 +57,9 @@ class taskController {
   async criar(req, res) {
     try {
       const novotask = req.body;
+      
+      // Inicializa o banco se necessário
+      await inicializarBanco();
       
       // Timeout de 10 segundos para a inserção
       const timeoutPromise = new Promise((_, reject) => {
@@ -76,6 +86,9 @@ class taskController {
       const { id } = req.params;
       const taskAtualizado = req.body;
       
+      // Inicializa o banco se necessário
+      await inicializarBanco();
+      
       // Timeout de 10 segundos para a atualização
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Timeout na atualização')), 10000);
@@ -99,6 +112,9 @@ class taskController {
   async deletar(req, res) {
     try {
       const { id } = req.params;
+      
+      // Inicializa o banco se necessário
+      await inicializarBanco();
       
       // Timeout de 10 segundos para a exclusão
       const timeoutPromise = new Promise((_, reject) => {

@@ -4,6 +4,10 @@
     {
       "src": "api/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/test-db.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -12,13 +16,16 @@
       "dest": "/api/index.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "src": "/test-db/(.*)",
+      "dest": "/api/test-db.js"
     }
   ],
   "functions": {
     "api/index.js": {
       "maxDuration": 60
+    },
+    "api/test-db.js": {
+      "maxDuration": 30
     }
   },
   "env": {
