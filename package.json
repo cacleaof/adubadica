@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "vercel-build": "echo 'Build completed'"
+    "vercel-build": "echo 'Build completed'",
+    "build": "echo 'Build completed'"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +19,8 @@
     "express": "^5.1.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.14.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
