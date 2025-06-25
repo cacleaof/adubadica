@@ -8,6 +8,10 @@
     {
       "src": "api/test-db.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/test-tables.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -18,6 +22,10 @@
     {
       "src": "/test-db/(.*)",
       "dest": "/api/test-db.js"
+    },
+    {
+      "src": "/test-tables/(.*)",
+      "dest": "/api/test-tables.js"
     }
   ],
   "functions": {
@@ -25,6 +33,9 @@
       "maxDuration": 60
     },
     "api/test-db.js": {
+      "maxDuration": 30
+    },
+    "api/test-tables.js": {
       "maxDuration": 30
     }
   },

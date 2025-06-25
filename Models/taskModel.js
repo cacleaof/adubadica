@@ -3,16 +3,7 @@ const conexao = require('../Database/conexao');
 class taskModel {
   async executarQuery(sql, params) {
     try {
-      // Timeout de 8 segundos para queries
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na query do banco')), 8000);
-      });
-      
-      const [resultados] = await Promise.race([
-        conexao.query(sql, params),
-        timeoutPromise
-      ]);
-      
+      const [resultados] = await conexao.query(sql, params);
       return resultados;
     } catch (erro) {
       console.error('Erro na query:', erro);
