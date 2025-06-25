@@ -1,22 +1,9 @@
 const taskModel = require('../Models/taskModel');
-const { inicializarBanco } = require('../Database/init-db');
 
 class taskController {
   async buscarTodos(req, res) {
     try {
-      // Inicializa o banco se necessário
-      await inicializarBanco();
-      
-      // Timeout de 15 segundos para a consulta
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na consulta')), 15000);
-      });
-      
-      const tasks = await Promise.race([
-        taskModel.buscarTodos(),
-        timeoutPromise
-      ]);
-      
+      const tasks = await taskModel.buscarTodos();
       res.status(200).json(tasks);
     } catch (error) {
       console.error('Erro em buscarTodos:', error);
@@ -30,20 +17,7 @@ class taskController {
   async buscar(req, res) {
     try {
       const { id } = req.params;
-      
-      // Inicializa o banco se necessário
-      await inicializarBanco();
-      
-      // Timeout de 10 segundos para a consulta
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na consulta')), 10000);
-      });
-      
-      const tasks = await Promise.race([
-        taskModel.buscar(id),
-        timeoutPromise
-      ]);
-      
+      const tasks = await taskModel.buscar(id);
       res.status(200).json(tasks);
     } catch (error) {
       console.error('Erro em buscar:', error);
@@ -57,20 +31,7 @@ class taskController {
   async criar(req, res) {
     try {
       const novotask = req.body;
-      
-      // Inicializa o banco se necessário
-      await inicializarBanco();
-      
-      // Timeout de 10 segundos para a inserção
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na criação')), 10000);
-      });
-      
-      const taskCriado = await Promise.race([
-        taskModel.criar(novotask),
-        timeoutPromise
-      ]);
-      
+      const taskCriado = await taskModel.criar(novotask);
       res.status(201).json(taskCriado);
     } catch (error) {
       console.error('Erro em criar:', error);
@@ -85,20 +46,7 @@ class taskController {
     try {
       const { id } = req.params;
       const taskAtualizado = req.body;
-      
-      // Inicializa o banco se necessário
-      await inicializarBanco();
-      
-      // Timeout de 10 segundos para a atualização
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na atualização')), 10000);
-      });
-      
-      const resulttaskAtualizado = await Promise.race([
-        taskModel.atualizar(taskAtualizado, id),
-        timeoutPromise
-      ]);
-      
+      const resulttaskAtualizado = await taskModel.atualizar(taskAtualizado, id);
       res.status(200).json(resulttaskAtualizado);
     } catch (error) {
       console.error('Erro em atualizar:', error);
@@ -112,20 +60,7 @@ class taskController {
   async deletar(req, res) {
     try {
       const { id } = req.params;
-      
-      // Inicializa o banco se necessário
-      await inicializarBanco();
-      
-      // Timeout de 10 segundos para a exclusão
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout na exclusão')), 10000);
-      });
-      
-      const resultadotaskDeletado = await Promise.race([
-        taskModel.deletar(id),
-        timeoutPromise
-      ]);
-      
+      const resultadotaskDeletado = await taskModel.deletar(id);
       res.status(200).json(resultadotaskDeletado);
     } catch (error) {
       console.error('Erro em deletar:', error);
