@@ -7,22 +7,35 @@ const pool = mysql.createPool({
     password: 'aduba@832',               
     database: 'caleao_controle',
     waitForConnections: true,
-    connectionLimit: 5,
+    connectionLimit: 10,
     queueLimit: 0,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    reconnect: true
+    acquireTimeout: 30000,
+    timeout: 30000,
+    reconnect: true,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
 });
 
-// Teste de conexão
-pool.getConnection()
-    .then(connection => {
-        console.log('Conexão com banco estabelecida');
-        connection.release();
-    })
-    .catch(err => {
-        console.error('Erro ao conectar com banco:', err);
-    });
+// Cache para verificar se já testamos a conexão
+let connectionTested = false;
+
+// Teste de conexão otimizado
+async function testConnection() {
+    if (!connectionTested) {
+        try {
+            const connection = await pool.getConnection();
+            console.log('Conexão com banco estabelecida');
+            connection.release();
+            connectionTested = true;
+        } catch (err) {
+            console.error('Erro ao conectar com banco:', err);
+            connectionTested = true; // Evita tentativas infinitas
+        }
+    }
+}
+
+// Testa conexão apenas uma vez
+testConnection();
 
 // Exporta o pool para uso local
 module.exports = pool;
