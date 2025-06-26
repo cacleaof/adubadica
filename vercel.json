@@ -12,12 +12,22 @@
     {
       "src": "api/test-tables.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/test-cors.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/api/index.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://angion.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Allow-Credentials": "true"
+      }
     },
     {
       "src": "/test-db/(.*)",
@@ -26,6 +36,16 @@
     {
       "src": "/test-tables/(.*)",
       "dest": "/api/test-tables.js"
+    },
+    {
+      "src": "/test-cors/(.*)",
+      "dest": "/api/test-cors.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://angion.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Access-Control-Allow-Credentials": "true"
+      }
     }
   ],
   "functions": {
@@ -36,6 +56,9 @@
       "maxDuration": 30
     },
     "api/test-tables.js": {
+      "maxDuration": 30
+    },
+    "api/test-cors.js": {
       "maxDuration": 30
     }
   },

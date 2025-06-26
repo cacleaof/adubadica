@@ -8,8 +8,37 @@ const tabelas = require('./Database/criar_tabelas');
 const dados = require('./Database/migrar_dados');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));  
-app.use(cors({origin: '*'}));
+app.use(express.urlencoded({ extended: true }));
+
+// Configuração de CORS mais específica
+const corsOptions = {
+    origin: [
+        'https://angion.vercel.app',
+        'http://localhost:3000',
+        'http://localhost:4200',
+        'http://localhost:8080',
+        'https://caleao.space'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
+
+// Middleware para adicionar headers CORS manualmente se necessário
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://angion.vercel.app');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
 
 // Inicializa as tabelas e dados de forma assíncrona
 async function inicializarBanco() {
