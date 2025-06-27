@@ -17,7 +17,8 @@ const corsOptions = {
         'http://localhost:3000',
         'http://localhost:4200',
         'http://localhost:8080',
-        'https://caleao.space'
+        'https://caleao.space',
+        'http://200.98.64.202'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
