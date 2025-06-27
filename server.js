@@ -36,6 +36,9 @@ app.use((req, res, next) => {
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
     } else {
+        // Timeout de 15 segundos para todas as requisições
+        req.setTimeout(15000);
+        res.setTimeout(15000);
         next();
     }
 });
@@ -54,6 +57,10 @@ async function inicializarBanco() {
 inicializarBanco();
 
 router(app, express);
+
+app.get('/ping', (req, res) => {
+    res.status(200).send('OK');
+});
 
 app.listen(port, (error) => {
     if(error) {

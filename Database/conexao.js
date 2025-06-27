@@ -7,10 +7,10 @@ const pool = mysql.createPool({
     password: 'aduba@832',               
     database: 'caleao_controle',
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 20,
     queueLimit: 0,
-    acquireTimeout: 30000,
-    timeout: 30000,
+    acquireTimeout: 10000,
+    timeout: 10000,
     reconnect: true,
     enableKeepAlive: true,
     keepAliveInitialDelay: 0
