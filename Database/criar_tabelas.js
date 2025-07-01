@@ -78,6 +78,7 @@ class tabelas {
                     tipo VARCHAR(10),
                     uid INT,
                     data DATE,
+                    fim DATE,
                     status VARCHAR(10),
                     prioridade INT,
                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
