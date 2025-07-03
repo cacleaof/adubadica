@@ -76,6 +76,38 @@ app.post('/api/upload-boleto', upload.single('boleto'), (req, res) => {
     res.json({ success: true, path: filePath });
   });
 
+// Endpoint para servir imagens
+app.get('/api/imagem/:filename', (req, res) => {
+  const filename = req.params.filename;
+  
+  // Caminho para a pasta de boletos
+  const imagePath = path.join(__dirname, 'public/assets/boleto', filename);
+  
+  console.log('🔍 Tentando servir imagem:', filename);
+  console.log('📁 Caminho completo:', imagePath);
+  
+  // Listar todos os arquivos na pasta para debug
+  const boletoDir = path.join(__dirname, 'public/assets/boleto');
+  if (fs.existsSync(boletoDir)) {
+    const files = fs.readdirSync(boletoDir);
+    console.log('📂 Arquivos disponíveis na pasta:', files);
+  }
+  
+  // Verificar se o arquivo existe
+  if (fs.existsSync(imagePath)) {
+    console.log('✅ Arquivo encontrado, enviando...');
+    res.sendFile(imagePath);
+  } else {
+    console.log('❌ Arquivo não encontrado:', imagePath);
+    res.status(404).json({ 
+      error: 'Imagem não encontrada',
+      requestedFile: filename,
+      fullPath: imagePath,
+      availableFiles: fs.existsSync(boletoDir) ? fs.readdirSync(boletoDir) : []
+    });
+  }
+});
+
 // Inicializa as tabelas e dados de forma assíncrona
 async function inicializarBanco() {
     try {
