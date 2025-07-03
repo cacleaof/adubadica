@@ -45,9 +45,12 @@ class despesaModel {
         tipo: (novodespesa.tipo || '').trim(),
         valor: parseFloat(novodespesa.valor) || 0,
         venc: dataFormatada,
-        cd: (novodespesa.CD || '').trim(),
+        CD: (novodespesa.CD || '').trim(),
         pix: (novodespesa.pix || '').trim(),
-        codbar: (novodespesa.codbar || '').trim()
+        codbar: (novodespesa.codbar || '').trim(),
+        parc: (novodespesa.parc || 0),
+        nparc: (novodespesa.nparc || 0),
+        imagem: (novodespesa.imagem || '').trim()
       };
 
       console.log('Dados formatados para inserção:', novodespesaFormatada);
