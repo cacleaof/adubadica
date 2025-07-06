@@ -108,6 +108,156 @@ app.get('/api/imagem/:filename', (req, res) => {
   }
 });
 
+// Endpoint de teste para upload de PDF
+app.post('/api/test-upload', upload.single('pdf'), (req, res) => {
+  console.log('🧪 Teste de upload - Arquivo recebido:', req.file);
+  console.log('🧪 Teste de upload - Body:', req.body);
+  
+  if (!req.file) {
+    return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+  }
+  
+  res.json({ 
+    success: true, 
+    file: {
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      size: req.file.size,
+      path: req.file.path
+    }
+  });
+});
+
+// Endpoint de teste para verificar cultura
+app.get('/api/test-cultura/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('🧪 Teste - Verificando cultura ID:', id);
+    
+    const culturaModel = require('./Models/culturaModel');
+    const culturas = await culturaModel.buscar(id);
+    
+    console.log('🧪 Teste - Resultado da busca:', culturas);
+    
+    if (!culturas || culturas.length === 0) {
+      return res.status(404).json({ error: 'Cultura não encontrada' });
+    }
+    
+    const cultura = culturas[0];
+    console.log('🧪 Teste - Dados da cultura:', cultura);
+    
+    res.json({
+      success: true,
+      cultura: {
+        id: cultura.id,
+        nome: cultura.nome,
+        pdf_filename: cultura.pdf_filename,
+        pdf_original_name: cultura.pdf_original_name,
+        pdf_path: cultura.pdf_path
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erro no teste:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint de teste para verificar se o arquivo PDF existe
+app.get('/api/test-pdf/:filename', (req, res) => {
+  try {
+    const { filename } = req.params;
+    console.log('🧪 Teste - Verificando arquivo PDF:', filename);
+    
+    const filePath = path.join(__dirname, 'assets/uploads', filename);
+    console.log('🧪 Teste - Caminho completo:', filePath);
+    
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      console.log('✅ Arquivo encontrado:', {
+        size: stats.size,
+        created: stats.birthtime,
+        modified: stats.mtime
+      });
+      
+      res.json({
+        success: true,
+        exists: true,
+        file: {
+          filename: filename,
+          path: filePath,
+          size: stats.size,
+          created: stats.birthtime,
+          modified: stats.mtime
+        }
+      });
+    } else {
+      console.log('❌ Arquivo não encontrado');
+      
+      // Listar arquivos na pasta para debug
+      const uploadDir = path.join(__dirname, 'assets/uploads');
+      let files = [];
+      if (fs.existsSync(uploadDir)) {
+        files = fs.readdirSync(uploadDir);
+      }
+      
+      res.json({
+        success: false,
+        exists: false,
+        requestedFile: filename,
+        availableFiles: files
+      });
+    }
+  } catch (error) {
+    console.error('❌ Erro no teste:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint de teste para download de PDF
+app.get('/api/test-download/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log('🧪 Teste - Download PDF para cultura ID:', id);
+    
+    const culturaModel = require('./Models/culturaModel');
+    const culturas = await culturaModel.buscar(id);
+    
+    if (!culturas || culturas.length === 0) {
+      return res.status(404).json({ error: 'Cultura não encontrada' });
+    }
+    
+    const cultura = culturas[0];
+    console.log('🧪 Teste - Dados da cultura:', cultura);
+    
+    if (!cultura.pdf_filename) {
+      return res.status(404).json({ error: 'PDF não encontrado para esta cultura' });
+    }
+    
+    const filePath = path.join(__dirname, 'assets/uploads', cultura.pdf_filename);
+    console.log('🧪 Teste - Caminho do arquivo:', filePath);
+    
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'Arquivo PDF não encontrado no servidor' });
+    }
+    
+    console.log('✅ Arquivo encontrado, tentando download...');
+    
+    // Tentar fazer o download
+    res.download(filePath, cultura.pdf_original_name || cultura.pdf_filename, (err) => {
+      if (err) {
+        console.error('❌ Erro no download:', err);
+        res.status(500).json({ error: 'Erro ao fazer download do arquivo' });
+      } else {
+        console.log('✅ Download realizado com sucesso');
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro no teste de download:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Inicializa as tabelas e dados de forma assíncrona
 async function inicializarBanco() {
     try {
@@ -118,8 +268,6 @@ async function inicializarBanco() {
         console.error('Erro ao inicializar banco de dados:', erro);
     }
 }
-
-
 
 inicializarBanco();
 
