@@ -2,10 +2,14 @@ const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
     host: 'caleao-controle.mysql.uhserver.com',
+    //host: '127.0.0.1',
     port: 3306,
     user: 'caleao',
-    password: 'aduba@832',               
+    //user: 'root',
+    password: 'aduba@832', 
+    //password: 'root',              
     database: 'caleao_controle',
+    //database: 'adubadica',
     waitForConnections: true,
     connectionLimit: 20,
     queueLimit: 0,

@@ -30,14 +30,26 @@ class taskController {
 
   async criar(req, res) {
     try {
+      console.log('Dados recebidos para criar task:', req.body);
+      
+      // Validação básica dos dados
+      if (!req.body.nome) {
+        return res.status(400).json({ 
+          error: 'Nome da tarefa é obrigatório' 
+        });
+      }
+
       const novotask = req.body;
       const taskCriado = await taskModel.criar(novotask);
+      
+      console.log('Task criada com sucesso:', taskCriado);
       res.status(201).json(taskCriado);
     } catch (error) {
-      console.error('Erro em criar:', error);
+      console.error('Erro detalhado em criar task:', error);
       res.status(500).json({ 
         error: 'Erro interno do servidor',
-        message: error.message 
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   }
