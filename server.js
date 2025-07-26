@@ -47,6 +47,37 @@ const storage = multer.diskStorage({
   });
   const upload = multer({ storage: storage });
 
+// Configuração do Multer para áudio
+const audioStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = path.join(__dirname, 'public/assets/audio');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `audio_${uniqueSuffix}${ext}`);
+  }
+});
+
+const audioUpload = multer({ 
+  storage: audioStorage,
+  fileFilter: (req, file, cb) => {
+    // Aceitar apenas arquivos de áudio
+    if (file.mimetype.startsWith('audio/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Apenas arquivos de áudio são permitidos!'), false);
+    }
+  },
+  limits: {
+    fileSize: 50 * 1024 * 1024 // 50MB máximo
+  }
+});
+
 app.use(cors(corsOptions));
 
 // Middleware para adicionar headers CORS manualmente se necessário
@@ -66,6 +97,16 @@ app.use((req, res, next) => {
     }
 });
 
+// Middleware de logging para debug
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  console.log('Headers:', req.headers);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Body:', req.body);
+  }
+  next();
+});
+
 // Endpoint para upload
 app.post('/api/upload-boleto', upload.single('boleto'), (req, res) => {
     if (!req.file) {
@@ -75,6 +116,29 @@ app.post('/api/upload-boleto', upload.single('boleto'), (req, res) => {
     const filePath = `/assets/boleto/${req.file.filename}`;
     res.json({ success: true, path: filePath });
   });
+
+// Endpoint para upload de áudio
+app.post('/api/upload-audio', audioUpload.single('audio'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nenhum arquivo de áudio enviado' });
+    }
+    
+    // Caminho para acessar o áudio pelo frontend
+    const filePath = `/assets/audio/${req.file.filename}`;
+    
+    res.json({ 
+      success: true, 
+      path: filePath,
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      size: req.file.size
+    });
+  } catch (error) {
+    console.error('Erro no upload de áudio:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
 
 // Endpoint para servir imagens
 app.get('/api/imagem/:filename', (req, res) => {
@@ -283,4 +347,22 @@ app.listen(port, (error) => {
     } else {
         console.log(`Server is running on http://localhost:${port}`);   
     }
+});
+
+// Endpoint de teste para verificar tabela task
+app.get('/api/test-task-table', async (req, res) => {
+  try {
+    const [rows] = await conexao.query('DESCRIBE task');
+    console.log('Estrutura da tabela task:', rows);
+    res.json({
+      success: true,
+      tableStructure: rows
+    });
+  } catch (error) {
+    console.error('Erro ao verificar tabela task:', error);
+    res.status(500).json({ 
+      error: 'Erro ao verificar tabela',
+      message: error.message 
+    });
+  }
 });

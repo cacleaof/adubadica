@@ -51,8 +51,7 @@ class despesaModel {
         parc: (novodespesa.parc || 0),
         nparc: (novodespesa.nparc || 0),
         imagem: (novodespesa.imagem || '').trim(),
-        valorpg: parseFloat(novodespesa.valorpg) || 0,
-        adubatipo: (novodespesa.adubatipo || '').trim(),
+        valorpg: parseFloat(novodespesa.valorpg) || 0
       };
 
       console.log('Dados formatados para inserção:', novodespesaFormatada);
