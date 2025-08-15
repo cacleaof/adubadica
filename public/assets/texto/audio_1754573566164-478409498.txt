@@ -1,0 +1,1 @@
+Vou testar o envio de voz, vou começar agora a desenvolver o sistema que vai pegar esses arquivos gravados e transformar em texto, para poder depois eu ter o acesso. Espero que dê tudo certo.

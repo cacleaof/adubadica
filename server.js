@@ -9,6 +9,8 @@ const router = require('./Routers/index');
 const conexao = require('./Database/conexao');
 const tabelas = require('./Database/criar_tabelas');
 const dados = require('./Database/migrar_dados');
+const audioService = require('./services/audioService');
+const audioInterruptionMiddleware = require('./middleware/audioInterruptionMiddleware');
 
 app.use(cors());
 app.use(express.json());
@@ -106,6 +108,9 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// Aplicar middleware de interrupção de áudio em todas as rotas
+app.use(audioInterruptionMiddleware);
 
 // Endpoint para upload
 app.post('/api/upload-boleto', upload.single('boleto'), (req, res) => {
@@ -333,7 +338,22 @@ async function inicializarBanco() {
     }
 }
 
-inicializarBanco();
+// Inicializar serviços
+async function inicializarServicos() {
+    try {
+        // Inicializar banco de dados
+        await inicializarBanco();
+        
+        // Iniciar serviço de processamento de áudio
+        audioService.start();
+        
+        console.log('✅ Todos os serviços inicializados com sucesso!');
+    } catch (erro) {
+        console.error('❌ Erro ao inicializar serviços:', erro);
+    }
+}
+
+inicializarServicos();
 
 router(app, express);
 

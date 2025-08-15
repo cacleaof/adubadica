@@ -1,4 +1,6 @@
 const taskModel = require('../Models/taskModel');
+const fs = require('fs');
+const path = require('path');
 
 class taskController {
   async buscarTodos(req, res) {
@@ -72,6 +74,33 @@ class taskController {
   async deletar(req, res) {
     try {
       const { id } = req.params;
+      
+      // Primeiro, buscar a tarefa para verificar se tem arquivo
+      const tarefas = await taskModel.buscarComArquivo(id);
+      
+      if (tarefas && tarefas.length > 0) {
+        const tarefa = tarefas[0];
+        
+        // Se a tarefa tem um arquivo na coluna grav, deletar o arquivo
+        if (tarefa.grav) {
+          const filePath = path.join(__dirname, '../assets/uploads', tarefa.grav);
+          
+          // Verificar se o arquivo existe antes de tentar deletar
+          if (fs.existsSync(filePath)) {
+            try {
+              fs.unlinkSync(filePath);
+              console.log(`✅ Arquivo deletado com sucesso: ${tarefa.grav}`);
+            } catch (fileError) {
+              console.error(`❌ Erro ao deletar arquivo ${tarefa.grav}:`, fileError);
+              // Continuar com a exclusão da tarefa mesmo se o arquivo não puder ser deletado
+            }
+          } else {
+            console.log(`⚠️ Arquivo não encontrado: ${tarefa.grav}`);
+          }
+        }
+      }
+      
+      // Deletar a tarefa do banco de dados
       const resultadotaskDeletado = await taskModel.deletar(id);
       res.status(200).json(resultadotaskDeletado);
     } catch (error) {

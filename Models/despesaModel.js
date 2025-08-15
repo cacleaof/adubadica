@@ -45,6 +45,7 @@ class despesaModel {
         tipo: (novodespesa.tipo || '').trim(),
         valor: parseFloat(novodespesa.valor) || 0,
         venc: dataFormatada,
+        pago: novodespesa.pago ? 1 : 0,
         CD: (novodespesa.CD || '').trim(),
         pix: (novodespesa.pix || '').trim(),
         codbar: (novodespesa.codbar || '').trim(),

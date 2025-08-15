@@ -38,7 +38,8 @@ class taskModel {
         proj: novotask.proj || '',
         data: novotask.data || null,
         status: novotask.status || 'pendente',
-        prioridade: novotask.prioridade || 1
+        prioridade: novotask.prioridade || 1,
+        grav: novotask.grav || null
       };
 
       const sql = "INSERT INTO task SET ?";
@@ -62,6 +63,24 @@ class taskModel {
     const sql = 'UPDATE task SET ? WHERE id = ?';
     const resultado = await this.executarQuery(sql, [taskAtualizado, id]);
     return { updated: resultado.affectedRows > 0, id, ...taskAtualizado };
+  }
+
+  async buscarComArquivo(id) {
+    const sql = 'SELECT *, grav FROM task WHERE id = ?';
+    return this.executarQuery(sql, [id]);
+  }
+
+  // Buscar tarefa por arquivo de áudio
+  async buscarPorArquivo(audioFile) {
+    const sql = 'SELECT * FROM task WHERE grav = ?';
+    return this.executarQuery(sql, ["/assets/audio/"+audioFile]);
+  }
+
+  // Atualizar tarefa com texto transcrito
+  async atualizarTexto(id, textFileName, transcription) {
+    const sql = 'UPDATE task SET texto = ?, texto_arquivo = ? WHERE id = ?';
+    const resultado = await this.executarQuery(sql, [transcription, textFileName, id]);
+    return { updated: resultado.affectedRows > 0, id };
   }
 }
 

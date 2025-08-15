@@ -99,6 +99,19 @@ class tabelas {
                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (id)
                 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+            },
+             {
+                nome: 'lib',
+                sql: `CREATE TABLE IF NOT EXISTS lib (
+                    id INT NOT NULL AUTO_INCREMENT,
+                    nome VARCHAR(100) NOT NULL,
+                    descricao VARCHAR(255),
+                    imagem VARCHAR(256),
+                    file VARCHAR(256),
+                    uid INT,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id)
+                )`
             }
         ];
 
