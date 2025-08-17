@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de Despesas com IA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-right: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .result-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .analysis-text {
+            line-height: 1.6;
+            color: #555;
+            white-space: pre-wrap;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            position: relative;
+            height: 400px;
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom-color: #4facfe;
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Analisador de Despesas com IA</h1>
+            <p>Use ChatGPT para analisar suas despesas e criar gráficos inteligentes</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="prompt">O que você quer analisar?</label>
+                    <textarea 
+                        id="prompt" 
+                        rows="4" 
+                        placeholder="Ex: Analise minhas despesas mensais e identifique padrões de gastos. Quais categorias estão consumindo mais recursos?"
+                    ></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="tipoGrafico">Tipo de Gráfico (opcional)</label>
+                    <select id="tipoGrafico">
+                        <option value="">Selecione um tipo</option>
+                        <option value="linha">Gráfico de Linha (evolução temporal)</option>
+                        <option value="barras">Gráfico de Barras (comparação)</option>
+                        <option value="pizza">Gráfico de Pizza (proporções)</option>
+                        <option value="area">Gráfico de Área (acumulado)</option>
+                        <option value="radar">Gráfico de Radar (múltiplas métricas)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="promptEspecifico">Requisitos específicos do gráfico (opcional)</label>
+                    <textarea 
+                        id="promptEspecifico" 
+                        rows="3" 
+                        placeholder="Ex: Use cores diferentes para cada categoria, inclua tooltips com valores detalhados, use português nos labels"
+                    ></textarea>
+                </div>
+
+                <button id="btnAnalisar" class="btn">
+                    <span id="loadingAnalise" class="loading" style="display: none;"></span>
+                    �� Analisar Despesas
+                </button>
+
+                <button id="btnGerarGrafico" class="btn" style="display: none;">
+                    <span id="loadingGrafico" class="loading" style="display: none;"></span>
+                    📊 Gerar Gráfico
+                </button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="analise">📈 Análise</div>
+                <div class="tab" data-tab="grafico">📊 Gráfico</div>
+                <div class="tab" data-tab="dados">📋 Dados</div>
+            </div>
+
+            <div class="tab-content active" id="analise">
+                <div id="resultadoAnalise"></div>
+            </div>
+
+            <div class="tab-content" id="grafico">
+                <div id="resultadoGrafico"></div>
+            </div>
+
+            <div class="tab-content" id="dados">
+                <div id="resultadoDados"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class DespesaAnalyzer {
+            constructor() {
+                this.baseURL = '/api/despesa-analyzer';
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadingStates = {
+                    analise: false,
+                    grafico: false
+                };
+            }
+
+            bindEvents() {
+                document.getElementById('btnAnalisar').addEventListener('click', () => this.analisarDespesas());
+                document.getElementById('btnGerarGrafico').addEventListener('click', () => this.gerarGrafico());
+                
+                // Tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+                });
+            }
+
+            switchTab(tabName) {
+                // Remover classe active de todas as tabs
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Adicionar classe active na tab selecionada
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            }
+
+            async analisarDespesas() {
+                const prompt = document.getElementById('prompt').value.trim();
+                
+                if (!prompt) {
+                    this.showMessage('Por favor, insira um prompt para análise.', 'error');
+                    return;
+                }
+
+                this.setLoading('analise', true);
+                
+                try {
+                    const response = await fetch(`${this.baseURL}/analisar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ prompt })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.mostrarResultadoAnalise(data.resultado);
+                        document.getElementById('btnGerarGrafico').style.display = 'inline-block';
+                        this.showMessage('Análise concluída com sucesso!', 'success');
+                    } else {
+                        this.showMessage(`Erro: ${data.message}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Erro na análise:', error);
+                    this.showMessage('Erro ao conectar com o servidor.', 'error');
+                } finally {
+                    this.setLoading('analise', false);
+                }
+            }
+
+            async gerarGrafico() {
+                const tipoGrafico = document.getElementById('tipoGrafico').value;
+                const promptEspecifico = document.getElementById('promptEspecifico').value.trim();
+                
+                if (!tipoGrafico) {
+                    this.showMessage('Por favor, selecione um tipo de gráfico.', 'error');
+                    return;
+                }
+
+                this.setLoading('grafico', true);
+                
+                try {
+                    const response = await fetch(`${this.baseURL}/gerar-grafico`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ tipoGrafico, promptEspecifico })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.mostrarResultadoGrafico(data.resultado);
+                        this.switchTab('grafico');
+                        this.showMessage('Gráfico gerado com sucesso!', 'success');
+                    } else {
+                        this.showMessage(`Erro: ${data.message}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Erro ao gerar gráfico:', error);
+                    this.showMessage('Erro ao conectar com o servidor.', 'error');
+                } finally {
+                    this.setLoading('grafico', false);
+                }
+            }
+
+            mostrarResultadoAnalise(resultado) {
+                const container = document.getElementById('resultadoAnalise');
+                
+                container.innerHTML = `
+                    <div class="result-card">
+                        <h3>�� Análise das Despesas</h3>
+                        <div class="analysis-text">${resultado.analise}</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>�� Resumo dos Dados</h3>
+                        <p><strong>Total de despesas:</strong> ${resultado.dadosFormatados.resumo.totalDespesas}</p>
+                        <p><strong>Valor total:</strong> R$ ${resultado.dadosFormatados.resumo.valorTotal.toFixed(2)}</p>
+                        <p><strong>Média por despesa:</strong> R$ ${resultado.dadosFormatados.resumo.mediaPorDespesa.toFixed(2)}</p>
+                    </div>
+                `;
+
+                // Mostrar dados formatados na aba de dados
+                this.mostrarDadosFormatados(resultado.dadosFormatados);
+            }
+
+            mostrarResultadoGrafico(resultado) {
+                const container = document.getElementById('resultadoGrafico');
+                
+                container.innerHTML = `
+                    <div class="result-card">
+                        <h3>📊 Gráfico: ${resultado.tipoGrafico}</h3>
+                        <div class="chart-container">
+                            ${resultado.codigo}
+                        </div>
+                    </div>
+                `;
+
+                // Aguardar um pouco para o DOM ser renderizado
+                setTimeout(() => {
+                    this.executarCodigoGrafico(resultado.codigo);
+                }, 100);
+            }
+
+            mostrarDadosFormatados(dados) {
+                const container = document.getElementById('resultadoDados');
+                
+                let html = `
+                    <div class="result-card">
+                        <h3>�� Dados das Despesas</h3>
+                        <p><strong>Total de despesas:</strong> ${dados.resumo.totalDespesas}</p>
+                        <p><strong>Valor total:</strong> R$ ${dados.resumo.valorTotal.toFixed(2)}</p>
+                        <p><strong>Média por despesa:</strong> R$ ${dados.resumo.mediaPorDespesa.toFixed(2)}</p>
+                    </div>
+                `;
+
+                // Despesas por mês
+                if (dados.porMes) {
+                    html += `
+                        <div class="result-card">
+                            <h3>�� Despesas por Mês</h3>
+                            ${Object.entries(dados.porMes).map(([mes, info]) => `
+                                <p><strong>${mes}:</strong> R$ ${info.total.toFixed(2)} (${info.quantidade} despesas)</p>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                // Despesas por tipo
+                if (dados.porTipo) {
+                    html += `
+                        <div class="result-card">
+                            <h3>��️ Despesas por Tipo</h3>
+                            ${Object.entries(dados.porTipo).map(([tipo, valor]) => `
+                                <p><strong>${tipo}:</strong> R$ ${valor.toFixed(2)}</p>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                // Despesas por status
+                if (dados.porStatus) {
+                    html += `
+                        <div class="result-card">
+                            <h3>💳 Status das Despesas</h3>
+                            <p><strong>Pago:</strong> R$ ${dados.porStatus.pago.toFixed(2)}</p>
+                            <p><strong>Pendente:</strong> R$ ${dados.porStatus.pendente.toFixed(2)}</p>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+            }
+
+            executarCodigoGrafico(codigo) {
+                try {
+                    // Extrair apenas o JavaScript do código HTML
+                    const scriptMatch = codigo.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+                    if (scriptMatch) {
+                        const scriptContent = scriptMatch[1];
+                        console.log('📜 Executando código do gráfico:', scriptContent);
+                        eval(scriptContent);
+                    } else {
+                        console.error('❌ Nenhum script encontrado no código');
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao executar código do gráfico:', error);
+                    
+                    // Fallback: tentar criar um gráfico básico
+                    this.criarGraficoFallback(resultado.tipoGrafico);
+                }
+            }
+
+            criarGraficoFallback(tipoGrafico) {
+                const container = document.querySelector('.chart-container');
+                if (!container) return;
+                
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h4>Gráfico ${tipoGrafico}</h4>
+                        <p>Erro ao gerar gráfico. Verifique o console para mais detalhes.</p>
+                        <button onclick="location.reload()" class="btn">Tentar Novamente</button>
+                    </div>
+                `;
+            }
+
+            setLoading(type, isLoading) {
+                this.loadingStates[type] = isLoading;
+                
+                if (type === 'analise') {
+                    const loading = document.getElementById('loadingAnalise');
+                    const btn = document.getElementById('btnAnalisar');
+                    
+                    if (isLoading) {
+                        loading.style.display = 'inline-block';
+                        btn.disabled = true;
+                    } else {
+                        loading.style.display = 'none';
+                        btn.disabled = false;
+                    }
+                } else if (type === 'grafico') {
+                    const loading = document.getElementById('loadingGrafico');
+                    const btn = document.getElementById('btnGerarGrafico');
+                    
+                    if (isLoading) {
+                        loading.style.display = 'inline-block';
+                        btn.disabled = true;
+                    } else {
+                        loading.style.display = 'none';
+                        btn.disabled = false;
+                    }
+                }
+            }
+
+            showMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = type;
+                messageDiv.textContent = message;
+                
+                document.querySelector('.content').appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 5000);
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new DespesaAnalyzer();
+        });
+    </script>
+</body>
+</html>

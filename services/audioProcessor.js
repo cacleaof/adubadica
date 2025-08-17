@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const OpenAI = require('openai');
 const taskModel = require('../Models/taskModel');
+require('dotenv').config();
 
 class AudioProcessor {
   constructor() {
@@ -10,7 +11,7 @@ class AudioProcessor {
     this.shouldInterrupt = false; // Nova flag para interrupção
     this.lastRequestTime = Date.now(); // Tempo da última requisição
     this.openai = new OpenAI({
-      apiKey: "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",
+      apiKey: process.env.OPENAI_API_KEY,
     });
     
     this.audioDir = path.join(__dirname, '../public/assets/audio');
@@ -271,7 +272,7 @@ class AudioProcessor {
           texto: transcription,
           texto_arquivo: transcription,
           descricao: transcription,
-          nome: transcription
+          nome: transcription.substring(0, 100)
         });
         
         const options = {
@@ -331,9 +332,8 @@ class AudioProcessor {
   }
 
   // Monitorar pasta de áudio para novos arquivos
-  async monitorAudioDirectory() {
-    try {
-      const files = await fs.readdir(this.audioDir);
+/*  async monitorAudioDirectory() {    
+   try { const files = await fs.readdir(this.audioDir);
       const audioFiles = files.filter(file => 
         file.endsWith('.wav') || file.endsWith('.mp3')
       );
@@ -355,9 +355,11 @@ class AudioProcessor {
     } catch (error) {
       console.error('❌ Erro ao monitorar pasta de áudio:', error);
     }
-  }
+  } */
+
 
   // Iniciar monitoramento
+  /*
   startMonitoring() {
     console.log('🎧 Iniciando monitoramento de pasta de áudio...');
     
@@ -372,7 +374,7 @@ class AudioProcessor {
       }
     });
   }
-
+*/
   // Obter status do processamento
   getStatus() {
     return {

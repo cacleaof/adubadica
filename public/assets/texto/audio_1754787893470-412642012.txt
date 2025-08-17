@@ -1,3 +1,0 @@
-ERRO: Transcrição falhou para audio_1754787893470-412642012.wav
-Data: 2025-08-10T12:02:15.770Z
-Motivo: Problema na API da OpenAI (quota/rate limit)

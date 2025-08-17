@@ -17,7 +17,7 @@ class AudioService {
     
     try {
       // Iniciar monitoramento
-      audioProcessor.startMonitoring();
+      //audioProcessor.startMonitoring();
       this.isRunning = true;
       
       console.log('✅ Serviço de processamento de áudio iniciado com sucesso');

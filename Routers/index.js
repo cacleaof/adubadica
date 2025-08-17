@@ -5,6 +5,7 @@ const routerLib = require('./libRoute');
 const routerDespesa = require('./despesaRoute');
 const routerProj = require('./projRoute');
 const routerAudio = require('./audioRoute');
+const despesaAnalyzerRoute = require('./despesaAnalyzerRoute');
 
 const express = require('express');
 const app = express();
@@ -17,4 +18,5 @@ module.exports = (app, express) => {
     app.use('/api', routerLib);
     app.use('/api', routerDespesa);
     app.use('/api', routerAudio);
+    app.use('/api/despesa-analyzer', despesaAnalyzerRoute);
 }

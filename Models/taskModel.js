@@ -28,7 +28,6 @@ class taskModel {
   async criar(novotask) {
     try {
       console.log('Criando task com dados:', novotask);
-      
       // Garantir que os campos obrigatórios existam
       const taskData = {
         nome: novotask.nome || '',
@@ -47,6 +46,7 @@ class taskModel {
       
       console.log('Task criada com ID:', resultado.insertId);
       return { id: resultado.insertId, ...taskData };
+     
     } catch (error) {
       console.error('Erro ao criar task:', error);
       throw error;

@@ -12,9 +12,14 @@ const dados = require('./Database/migrar_dados');
 const audioService = require('./services/audioService');
 const audioInterruptionMiddleware = require('./middleware/audioInterruptionMiddleware');
 
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Servir arquivos estáticos HTML da pasta public
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
 // Configuração de CORS mais específica
@@ -385,4 +390,9 @@ app.get('/api/test-task-table', async (req, res) => {
       message: error.message 
     });
   }
+});
+
+// Rota específica para o analisador de despesas
+app.get('/despesa-analyzer.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/despesa-analyzer.html'));
 });
