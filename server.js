@@ -182,26 +182,6 @@ app.get('/api/imagem/:filename', (req, res) => {
   }
 });
 
-// Endpoint de teste para upload de PDF
-app.post('/api/test-upload', upload.single('pdf'), (req, res) => {
-  console.log('🧪 Teste de upload - Arquivo recebido:', req.file);
-  console.log('🧪 Teste de upload - Body:', req.body);
-  
-  if (!req.file) {
-    return res.status(400).json({ error: 'Nenhum arquivo enviado' });
-  }
-  
-  res.json({ 
-    success: true, 
-    file: {
-      filename: req.file.filename,
-      originalname: req.file.originalname,
-      size: req.file.size,
-      path: req.file.path
-    }
-  });
-});
-
 // Endpoint de teste para verificar cultura
 app.get('/api/test-cultura/:id', async (req, res) => {
   try {
