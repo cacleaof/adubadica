@@ -246,20 +246,6 @@ app.get('/api/test-pdf/:filename', (req, res) => {
       });
     } else {
       console.log('❌ Arquivo não encontrado');
-      
-      // Listar arquivos na pasta para debug
-      const uploadDir = path.join(__dirname, 'assets/uploads');
-      let files = [];
-      if (fs.existsSync(uploadDir)) {
-        files = fs.readdirSync(uploadDir);
-      }
-      
-      res.json({
-        success: false,
-        exists: false,
-        requestedFile: filename,
-        availableFiles: files
-      });
     }
   } catch (error) {
     console.error('❌ Erro no teste:', error);
