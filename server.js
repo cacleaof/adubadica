@@ -374,24 +374,6 @@ app.listen(port, (error) => {
     }
 });
 
-// Endpoint de teste para verificar tabela task
-app.get('/api/test-task-table', async (req, res) => {
-  try {
-    const [rows] = await conexao.query('DESCRIBE task');
-    console.log('Estrutura da tabela task:', rows);
-    res.json({
-      success: true,
-      tableStructure: rows
-    });
-  } catch (error) {
-    console.error('Erro ao verificar tabela task:', error);
-    res.status(500).json({ 
-      error: 'Erro ao verificar tabela',
-      message: error.message 
-    });
-  }
-});
-
 // Rota específica para o analisador de despesas
 app.get('/despesa-analyzer.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/despesa-analyzer.html'));
