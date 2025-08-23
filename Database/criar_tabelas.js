@@ -10,6 +10,7 @@ class tabelas {
                 nome: 'despesa',
                 sql: `CREATE TABLE IF NOT EXISTS despesa (
                     id INT NOT NULL AUTO_INCREMENT,
+                    conta INT,
                     nome VARCHAR(100) NOT NULL,
                     imagem VARCHAR(256),
                     descricao VARCHAR(100),
