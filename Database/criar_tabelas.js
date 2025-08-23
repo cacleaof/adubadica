@@ -112,6 +112,17 @@ class tabelas {
                     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (id)
                 )`
+            },
+            {
+                nome: 'conta',
+                sql: `CREATE TABLE IF NOT EXISTS conta (
+                    id INT NOT NULL AUTO_INCREMENT,
+                    nome VARCHAR(100) NOT NULL,
+                    descricao VARCHAR(255),
+                    uid INT,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id)
+                )`
             }
         ];
 
