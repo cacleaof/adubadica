@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 const pool = mysql.createPool({
     host: 'caleao-controle.mysql.uhserver.com',
@@ -6,7 +7,7 @@ const pool = mysql.createPool({
     port: 3306,
     user: 'caleao',
     //user: 'root',
-    password: 'aduba@832', 
+    password: process.env.PASSWORD,
     //password: 'root',              
     database: 'caleao_controle',
     //database: 'adubadica',
